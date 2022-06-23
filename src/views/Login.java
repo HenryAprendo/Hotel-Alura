@@ -104,13 +104,9 @@ public class Login extends JFrame {
 					usuario.setVisible(true);
 					dispose();
 				}else {
-					System.out.println("entro a validacion");
 					noEsValido();
-				}
-				
-				
-				
-							
+				}	
+											
 			}
 		});
 		btnLogin.setBounds(409, 322, 103, 33);

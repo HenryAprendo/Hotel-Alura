@@ -17,10 +17,15 @@ import javax.swing.JPopupMenu;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Calendar;
+
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
+
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 
 @SuppressWarnings("serial")
@@ -118,6 +123,24 @@ public class Reservas extends JFrame {
 		btnReservar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// TODO  validar y guardar información a la base de datos y acceder registro de huesped
+				
+				Calendar checkin  = txtFechaE.getCalendar();
+							
+				int anho = checkin.get(Calendar.YEAR);				
+				int dia = checkin.get(Calendar.DAY_OF_MONTH);
+				int mes = checkin.get(Calendar.MONTH);
+				
+				Calendar checkout = txtFechaS.getCalendar();
+				int anho2 = checkout.get(Calendar.YEAR);				
+				int dia2 = checkout.get(Calendar.DAY_OF_MONTH);
+				int mes2 = checkin.get(Calendar.MONTH);
+								
+				LocalDate fechaEntrada = LocalDate.of(anho,mes,dia);
+				LocalDate fechaSalida = LocalDate.of(anho2,mes2,dia2);
+				int dias = fechaSalida.getDayOfMonth() - fechaEntrada.getDayOfMonth();
+				System.out.println(dias);
+				
+				//txtFechaE , txtValor, txtFormaPago, txtFechaE
 				RegistroHuesped huesped = new RegistroHuesped();
 				huesped.setVisible(true);
 				dispose();
