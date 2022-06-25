@@ -17,7 +17,11 @@ import javax.swing.JPopupMenu;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -33,6 +37,11 @@ public class Reservas extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField txtValor;
+	private JDateChooser txtFechaE;
+	private JDateChooser txtFechaS;
+	private JComboBox txtFormaPago;
+	private Integer valorPagar;
+	private int COSTO_HABITACION = 30;
 
 	/**
 	 * Launch the application.
@@ -72,7 +81,8 @@ public class Reservas extends JFrame {
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
-		JDateChooser txtFechaE = new JDateChooser();
+		txtFechaE = new JDateChooser();
+		txtFechaE.setDateFormatString("yyyy-MM-dd");
 		txtFechaE.setBounds(88, 166, 235, 33);
 		panel.add(txtFechaE);
 		
@@ -86,7 +96,17 @@ public class Reservas extends JFrame {
 		lblNewLabel_1_1.setFont(new Font("Arial", Font.PLAIN, 14));
 		panel.add(lblNewLabel_1_1);
 		
-		JDateChooser txtFechaS = new JDateChooser();
+		txtFechaS = new JDateChooser();
+		txtFechaS.setDateFormatString("yyyy-MM-dd");
+		txtFechaS.addPropertyChangeListener(new PropertyChangeListener() {
+			
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				int numeroDeDias = calcularNumeroDias(txtFechaE.getCalendar(), txtFechaS.getCalendar());
+				valorPagar = numeroDeDias * COSTO_HABITACION;
+			}
+		});
+		
 		txtFechaS.setBounds(88, 234, 235, 33);
 		txtFechaS.getCalendarButton().setBackground(Color.WHITE);
 		panel.add(txtFechaS);
@@ -102,7 +122,7 @@ public class Reservas extends JFrame {
 		lblNewLabel_1_1_1.setFont(new Font("Arial", Font.PLAIN, 14));
 		panel.add(lblNewLabel_1_1_1);
 		
-		JComboBox txtFormaPago = new JComboBox();
+		txtFormaPago = new JComboBox();
 		txtFormaPago.setBounds(88, 373, 235, 33);
 		txtFormaPago.setFont(new Font("Arial", Font.PLAIN, 14));
 		txtFormaPago.setModel(new DefaultComboBoxModel(new String[] {"Tarjeta de Crédito", "Tarjeta de Débito", "Dinero en efectivo"}));
@@ -121,26 +141,11 @@ public class Reservas extends JFrame {
 		
 		JButton btnReservar = new JButton("Continuar");
 		btnReservar.addActionListener(new ActionListener() {
+
 			public void actionPerformed(ActionEvent e) {
-				// TODO  validar y guardar información a la base de datos y acceder registro de huesped
 				
-				Calendar checkin  = txtFechaE.getCalendar();
-							
-				int anho = checkin.get(Calendar.YEAR);				
-				int dia = checkin.get(Calendar.DAY_OF_MONTH);
-				int mes = checkin.get(Calendar.MONTH);
+				guardar();
 				
-				Calendar checkout = txtFechaS.getCalendar();
-				int anho2 = checkout.get(Calendar.YEAR);				
-				int dia2 = checkout.get(Calendar.DAY_OF_MONTH);
-				int mes2 = checkin.get(Calendar.MONTH);
-								
-				LocalDate fechaEntrada = LocalDate.of(anho,mes,dia);
-				LocalDate fechaSalida = LocalDate.of(anho2,mes2,dia2);
-				int dias = fechaSalida.getDayOfMonth() - fechaEntrada.getDayOfMonth();
-				System.out.println(dias);
-				
-				//txtFechaE , txtValor, txtFormaPago, txtFechaE
 				RegistroHuesped huesped = new RegistroHuesped();
 				huesped.setVisible(true);
 				dispose();
@@ -170,6 +175,7 @@ public class Reservas extends JFrame {
 		lblNewLabel_2.setBounds(15, 6, 104, 107);
 		panel.add(lblNewLabel_2);
 	}
+	
 	private static void addPopup(Component component, final JPopupMenu popup) {
 		component.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
@@ -187,4 +193,88 @@ public class Reservas extends JFrame {
 			}
 		});
 	}
+	
+	
+	private void guardar() {
+		
+		if (txtFechaE.getDate() != null && txtFechaS.getDate() != null ) {
+			String fechaEntrada = ((JTextField) txtFechaE.getDateEditor().getUiComponent()).getText();
+			String fechaSalida = ((JTextField) txtFechaS.getDateEditor().getUiComponent()).getText();
+		}
+		
+		String selectedItem = (String) txtFormaPago.getSelectedItem();
+		//crear clase modelo para instanciar estos datos y generar el método guardar en controller
+	}
+	
+	
+	private int calcularNumeroDias(Calendar in, Calendar out) {
+		int dia = in.get(Calendar.DAY_OF_MONTH);
+		int mes = in.get(Calendar.MONTH);
+		
+		int dia2 = out.get(Calendar.DAY_OF_MONTH);
+		int mes2 = out.get(Calendar.MONTH);
+		
+		int dias = 0;
+		
+		if (mes == mes2) {
+			System.out.println("fechas del mismo mes");
+			dias = dia2 - dia;
+			System.out.println(dias);
+		}
+		else {
+			System.out.println("fechas de meses diferentes");
+			//mismo mes
+			int diaMaximo = lastDayOfMonth(mes);
+			dias = diaMaximo - dia;
+			
+			int d = mes2 - mes;
+			
+			if (d > 1) {
+				while(d != 1) {
+					System.out.println(d);
+					dias += lastDayOfMonth(d);
+					d--;
+				}
+			}	
+			
+			dias += dia2;
+			System.out.println(dias);
+			
+		}
+		
+		return dias;
+		
+	}
+	
+	
+	private Integer lastDayOfMonth(Integer month) {
+		int d = 0;
+		switch (month) {
+									
+			case 0:
+			case 2:
+			case 4:
+			case 6:
+			case 7:
+			case 9:
+			case 11:	
+				d = 31;
+				break;
+				
+			case 3:
+			case 5:
+			case 8:
+			case 10: 
+				d = 30;
+				break;
+				
+			case 1: 
+				d = 28;
+				break;
+				
+		}
+		
+		return d;
+	}
 }
+
