@@ -6,9 +6,13 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.SystemColor;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.ImageIcon;
 import java.awt.Color;
 import javax.swing.JTextField;
+
+import com.data.jdbc.controller.ReservaController;
+import com.data.jdbc.modelo.Reserva;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Font;
 import javax.swing.JComboBox;
@@ -28,9 +32,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-
 
 @SuppressWarnings("serial")
 public class Reservas extends JFrame {
@@ -42,6 +43,8 @@ public class Reservas extends JFrame {
 	private JComboBox txtFormaPago;
 	private Integer valorPagar;
 	private int COSTO_HABITACION = 30;
+	
+	private ReservaController reservaController;
 
 	/**
 	 * Launch the application.
@@ -63,6 +66,9 @@ public class Reservas extends JFrame {
 	 * Create the frame.
 	 */
 	public Reservas() {
+		
+		this.reservaController = new ReservaController();
+		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Reservas.class.getResource("/imagenes/calendario.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 910, 540);
@@ -102,8 +108,9 @@ public class Reservas extends JFrame {
 			
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				int numeroDeDias = calcularNumeroDias(txtFechaE.getCalendar(), txtFechaS.getCalendar());
-				valorPagar = numeroDeDias * COSTO_HABITACION;
+	
+				calcularNumeroDias(txtFechaE, txtFechaS);
+				
 			}
 		});
 		
@@ -200,49 +207,57 @@ public class Reservas extends JFrame {
 		if (txtFechaE.getDate() != null && txtFechaS.getDate() != null ) {
 			String fechaEntrada = ((JTextField) txtFechaE.getDateEditor().getUiComponent()).getText();
 			String fechaSalida = ((JTextField) txtFechaS.getDateEditor().getUiComponent()).getText();
+			
+			String selectedItem = (String) txtFormaPago.getSelectedItem();
+			
+			Reserva reserva = new Reserva(java.sql.Date.valueOf(fechaEntrada), java.sql.Date.valueOf(fechaSalida), selectedItem, valorPagar);
+			this.reservaController.guardar(reserva);
+			
 		}
-		
-		String selectedItem = (String) txtFormaPago.getSelectedItem();
-		//crear clase modelo para instanciar estos datos y generar el método guardar en controller
+		else {
+			JOptionPane.showMessageDialog(contentPane,"Debes llenar los campos de fechas");
+		}
+
 	}
 	
 	
-	private int calcularNumeroDias(Calendar in, Calendar out) {
-		int dia = in.get(Calendar.DAY_OF_MONTH);
-		int mes = in.get(Calendar.MONTH);
-		
-		int dia2 = out.get(Calendar.DAY_OF_MONTH);
-		int mes2 = out.get(Calendar.MONTH);
-		
-		int dias = 0;
-		
-		if (mes == mes2) {
-			System.out.println("fechas del mismo mes");
-			dias = dia2 - dia;
-			System.out.println(dias);
+	
+	private void calcularNumeroDias(JDateChooser fechaE, JDateChooser fechaS) {
+		int numeroDeDias = 0;
+		if(fechaE.getDate() != null && fechaS.getDate() != null) {
+			Calendar in = fechaE.getCalendar();
+			Calendar out = fechaS.getCalendar();
+			
+			int dia = in.get(Calendar.DAY_OF_MONTH);
+			int mes = in.get(Calendar.MONTH);
+			
+			int dia2 = out.get(Calendar.DAY_OF_MONTH);
+			int mes2 = out.get(Calendar.MONTH);
+						
+			if (mes == mes2) {
+				System.out.println("fechas del mismo mes");
+				numeroDeDias = dia2 - dia;			}
+			else {
+				System.out.println("fechas de meses diferentes");
+				//mismo mes
+				int diaMaximo = lastDayOfMonth(mes);
+				numeroDeDias = diaMaximo - dia;
+				
+				int d = mes2 - mes;
+				
+				if (d > 1) {
+					while(d != 1) {
+						System.out.println(d);
+						numeroDeDias += lastDayOfMonth(d);
+						d--;
+					}
+				}	
+				
+				numeroDeDias += dia2;				
+			}
 		}
-		else {
-			System.out.println("fechas de meses diferentes");
-			//mismo mes
-			int diaMaximo = lastDayOfMonth(mes);
-			dias = diaMaximo - dia;
-			
-			int d = mes2 - mes;
-			
-			if (d > 1) {
-				while(d != 1) {
-					System.out.println(d);
-					dias += lastDayOfMonth(d);
-					d--;
-				}
-			}	
-			
-			dias += dia2;
-			System.out.println(dias);
-			
-		}
-		
-		return dias;
+		valorPagar = numeroDeDias * COSTO_HABITACION;
+		System.out.println(valorPagar);
 		
 	}
 	
