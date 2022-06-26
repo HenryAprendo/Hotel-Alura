@@ -108,9 +108,7 @@ public class Reservas extends JFrame {
 			
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-	
 				calcularNumeroDias(txtFechaE, txtFechaS);
-				
 			}
 		});
 		
@@ -150,7 +148,6 @@ public class Reservas extends JFrame {
 		btnReservar.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				
 				guardar();
 				
 				RegistroHuesped huesped = new RegistroHuesped();
@@ -212,12 +209,21 @@ public class Reservas extends JFrame {
 			
 			Reserva reserva = new Reserva(java.sql.Date.valueOf(fechaEntrada), java.sql.Date.valueOf(fechaSalida), selectedItem, valorPagar);
 			this.reservaController.guardar(reserva);
+			JOptionPane.showMessageDialog(contentPane,"Registro guardado satisfactoriamente");
+			limpiar();
 			
 		}
 		else {
 			JOptionPane.showMessageDialog(contentPane,"Debes llenar los campos de fechas");
 		}
 
+	}
+	
+	private void limpiar() {
+		this.txtFormaPago.setSelectedIndex(0);
+		this.txtValor.setText("");
+		this.txtFechaE.setCalendar(null);
+		this.txtFechaS.setCalendar(null);
 	}
 	
 	
@@ -291,5 +297,25 @@ public class Reservas extends JFrame {
 		
 		return d;
 	}
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
