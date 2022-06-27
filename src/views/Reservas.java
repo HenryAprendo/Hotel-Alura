@@ -148,6 +148,7 @@ public class Reservas extends JFrame {
 		btnReservar.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
+								
 				guardar();
 				
 				RegistroHuesped huesped = new RegistroHuesped();

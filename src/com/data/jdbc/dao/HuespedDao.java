@@ -28,7 +28,7 @@ public class HuespedDao {
 			statement.setString(2, huesped.getApellido());
 			statement.setDate(3, huesped.getFechaNacimiento());
 			statement.setString(4, huesped.getNacionalidad());
-			statement.setInt(5, huesped.getTelefono());
+			statement.setString(5, huesped.getTelefono());
 			statement.execute();
 			
 			ResultSet resultSet = statement.getGeneratedKeys();

@@ -8,9 +8,9 @@ public class Huesped {
 	private String apellido;
 	private Date fechaNacimiento;
 	private String Nacionalidad;
-	private Integer telefono;
+	private String telefono;
 	
-	public Huesped(String nombre,String apellido,Date fechaNacimiento,String Nacionalidad,Integer telefono) {
+	public Huesped(String nombre,String apellido,Date fechaNacimiento,String Nacionalidad, String telefono) {
 		this.nombre = nombre;
 		this.apellido = apellido;
 		this.fechaNacimiento = fechaNacimiento;
@@ -34,7 +34,7 @@ public class Huesped {
 		return Nacionalidad;
 	}
 
-	public Integer getTelefono() {
+	public String getTelefono() {
 		return telefono;
 	}
 	
