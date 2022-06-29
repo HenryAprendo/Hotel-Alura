@@ -2,8 +2,10 @@ package com.data.jdbc.test;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.UUID;
 
 import com.data.jdbc.factory.ConnectionFactory;
+import java.util.*;
 
 public class PruebaConexion {
 
@@ -13,7 +15,8 @@ public class PruebaConexion {
 		
 		System.out.println("Cerrando la conexión");
 		
-		conexion.close();
+		conexion.close();		
+		
 	}
 	
 }

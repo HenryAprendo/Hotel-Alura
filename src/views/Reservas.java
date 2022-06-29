@@ -149,9 +149,10 @@ public class Reservas extends JFrame {
 
 			public void actionPerformed(ActionEvent e) {
 								
-				guardar();
+				String idReserva = guardar();
 				
 				RegistroHuesped huesped = new RegistroHuesped();
+				huesped.txtNreserva.setText(idReserva);
 				huesped.setVisible(true);
 				dispose();
 			}
@@ -200,7 +201,8 @@ public class Reservas extends JFrame {
 	}
 	
 	
-	private void guardar() {
+	private String guardar() {
+		String idReserva = "";
 		
 		if (txtFechaE.getDate() != null && txtFechaS.getDate() != null ) {
 			String fechaEntrada = ((JTextField) txtFechaE.getDateEditor().getUiComponent()).getText();
@@ -209,15 +211,18 @@ public class Reservas extends JFrame {
 			String selectedItem = (String) txtFormaPago.getSelectedItem();
 			
 			Reserva reserva = new Reserva(java.sql.Date.valueOf(fechaEntrada), java.sql.Date.valueOf(fechaSalida), selectedItem, valorPagar);
+			idReserva = reserva.getidReserva();
+			
 			this.reservaController.guardar(reserva);
 			JOptionPane.showMessageDialog(contentPane,"Registro guardado satisfactoriamente");
 			limpiar();
+			
 			
 		}
 		else {
 			JOptionPane.showMessageDialog(contentPane,"Debes llenar los campos de fechas");
 		}
-
+		return idReserva;
 	}
 	
 	private void limpiar() {
@@ -263,8 +268,12 @@ public class Reservas extends JFrame {
 				numeroDeDias += dia2;				
 			}
 		}
+		
 		valorPagar = numeroDeDias * COSTO_HABITACION;
-		System.out.println(valorPagar);
+		
+		if (txtValor != null) {
+			txtValor.setText("" + valorPagar);
+		}
 		
 	}
 	

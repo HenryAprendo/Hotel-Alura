@@ -4,6 +4,12 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import com.data.jdbc.controller.HuespedController;
+import com.data.jdbc.controller.ReservaController;
+import com.data.jdbc.modelo.Huesped;
+import com.data.jdbc.modelo.Reserva;
+
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -13,6 +19,7 @@ import java.awt.SystemColor;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JTabbedPane;
 import java.awt.Toolkit;
@@ -23,6 +30,8 @@ public class Busqueda extends JFrame {
 	private JPanel contentPane;
 	private JTextField txtBuscar;
 	private JTable tbHuespedes;
+	private HuespedController huespedController;
+	private ReservaController reservaController;
 
 	/**
 	 * Launch the application.
@@ -44,6 +53,10 @@ public class Busqueda extends JFrame {
 	 * Create the frame.
 	 */
 	public Busqueda() {
+		
+		huespedController = new HuespedController();
+		reservaController = new ReservaController();
+		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Busqueda.class.getResource("/imagenes/lupa2.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 910, 516);
@@ -58,6 +71,9 @@ public class Busqueda extends JFrame {
 		contentPane.add(txtBuscar);
 		txtBuscar.setColumns(10);
 		
+		//TODO 
+		cargarTabla();	
+				
 		JButton btnBuscar = new JButton("");
 		btnBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -125,4 +141,27 @@ public class Busqueda extends JFrame {
 		contentPane.add(lblNewLabel_2);
 		setResizable(false);
 	}
+	
+	private void cargarTabla() {
+		
+		List<Huesped> listaHuespedes = this.huespedController.listar();
+		listaHuespedes.forEach(huesped -> System.out.println(huesped.getNombre()));
+		
+		List<Reserva> listaReservas = this.reservaController.listar();
+		listaReservas.forEach(reserva -> System.out.println(reserva.getidReserva()));
+	}
+	
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+

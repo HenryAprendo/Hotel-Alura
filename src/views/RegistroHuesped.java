@@ -30,7 +30,7 @@ public class RegistroHuesped extends JFrame {
 	private JTextField txtNombre;
 	private JTextField txtApellido;
 	private JTextField txtTelefono;
-	private JTextField txtNreserva;
+	protected JTextField txtNreserva;
 	private JDateChooser txtFechaN;
 	private JComboBox txtNacionalidad;
 	
@@ -198,9 +198,10 @@ public class RegistroHuesped extends JFrame {
 			String fechaNacimiento = ((JTextField) txtFechaN.getDateEditor().getUiComponent()).getText();
 			String nacionalidad = (String) txtNacionalidad.getSelectedItem();
 			String telefono = txtTelefono.getText();
+			String id_reserva = txtNreserva.getText();
 			
-			Huesped huesped = new Huesped(nombre, apellido, java.sql.Date.valueOf(fechaNacimiento), nacionalidad, telefono);		
-			//this.huespedController.guardar(huesped);
+			Huesped huesped = new Huesped(nombre, apellido, java.sql.Date.valueOf(fechaNacimiento), nacionalidad, telefono, id_reserva);		
+			this.huespedController.guardar(huesped);
 			JOptionPane.showMessageDialog(this, "Registro exitoso");
 		}
 	}
